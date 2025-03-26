@@ -1,0 +1,62 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Edu_System_BackEnd</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Edu-System-BackEnd.Core\DTOs\CreateStudentDto.cs~RF1d28821.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\DTOs\CreateStudentDto.cs~RF1d3abe0.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\DTOs\CreateStudentDto.cs~RF1d9ddc0.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\DTOs\CreateStudentDto.cs~RF1da90c5.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\DTOs\CreateStudentDto.cs~RF1e217f4.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\DTOs\StudentDTO.cs~RF1a4b710.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\DTOs\Student\UpdateStudentDto.cs~RF1c8c960.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\DTOs\Teacher\TeacherDto.cs~RF2960e44.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Entities\Student.cs~RFef83bc.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Entities\Subject.cs~RF1a5850e.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Entities\Teacher.cs~RF123a485.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Entities\User.cs~RF1c848d6.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Entities\User.cs~RFabd002.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Entities\User.cs~RFba1a74.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Entities\UserRole.cs~RFa1ebe7.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Enums\TrailType - Copy.cs~RF20e3af7.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Interfaces\IAuditable.cs~RF1773ff7.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Interfaces\IServices\ISchoolClassService.cs~RF20bc0ee.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Interfaces\IStudentRepository.cs~RF114ebd8.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Interfaces\IStudentRepository.cs~RF1f13bfe.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Interfaces\IStudentRepository.cs~RF20a888e.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Interfaces\IStudentRepository.cs~RF3c4c37.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Interfaces\IStudentService.cs~RF11ef03c.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Interfaces\IStudentService.cs~RF6af643.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Interfaces\ISubjectService.cs~RF11cf557.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Interfaces\ITeacherRepository.cs~RF1efe5b5.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Interfaces\ITeacherService.cs~RF2934725.TMP" />
+    <None Remove="Edu-System-BackEnd.Core\Mapping\MappingProfile.cs~RF1a6a7a5.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Edu-System-BackEnd.API\Config\" />
+    <Folder Include="Edu-System-BackEnd.API\Helpers\" />
+    <Folder Include="Edu-System-BackEnd.Infrastructure\Security\" />
+    <Folder Include="Edu-System-BackEnd.Infrastructure\Security\Authentication\" />
+    <Folder Include="Migrations\" />
+    <Folder Include="Sqlite\" />
+  </ItemGroup>
+
+</Project>
