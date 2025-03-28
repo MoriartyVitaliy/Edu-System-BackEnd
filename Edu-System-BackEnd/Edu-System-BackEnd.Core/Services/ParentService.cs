@@ -5,7 +5,6 @@ using Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Exceptions;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces.IRepositories;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces.IServices;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Services
 {
@@ -23,7 +22,7 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Services
             var parents = await _parentRepository.GetAllAsync();
             return _mapper.Map<IEnumerable<ParentDto>>(parents);
         }
-        public async Task<ParentDto?> GetParentByIdAsync(Guid id)
+        public async Task<ParentDto> GetParentByIdAsync(Guid id)
         {
             var parent = await _parentRepository.GetByIdAsync(id) 
                 ?? throw new NotFoundException($"Parent with ID {id} not found.");
@@ -44,7 +43,6 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Services
         }
         public async Task DeleteParentAsync(Guid id)
         {
-            var parent = await _parentRepository.GetByIdAsync(id) ?? throw new NotFoundException("Parent not found.");
             await _parentRepository.DeleteAsync(id);
         }
         public async Task<IEnumerable<StudentDto>> GetParentStudentAsync(Guid parentId)

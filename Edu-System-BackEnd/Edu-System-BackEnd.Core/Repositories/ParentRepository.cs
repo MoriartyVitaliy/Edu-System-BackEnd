@@ -35,9 +35,7 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
         {
             var parentRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Parent");
             if (parentRole == null)
-            {
                 throw new NotFoundException("Role 'Parent' not found via data base");
-            }
 
             parent.UserRoles = new List<UserRole> 
             {
@@ -50,7 +48,8 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
         public Task UpdateAsync(Parent parent)
         {
             var existingParent = _context.Parents.FirstOrDefault(p => p.Id == parent.Id);
-            if (existingParent == null) throw new NotFoundException($"Parent with ID {parent.Id} not found.");
+            if (existingParent == null) 
+                throw new NotFoundException($"Parent with ID {parent.Id} not found.");
 
             _context.Parents.Update(parent);
             return _context.SaveChangesAsync();
@@ -58,19 +57,22 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
         public async Task DeleteAsync(Guid id)
         {
             var parent = await _context.Parents.FirstOrDefaultAsync(p => p.Id == id);
-            if (parent != null)
-            {
-                _context.Parents.Remove(parent);
-                await _context.SaveChangesAsync();
-            }
+            if (parent == null)
+                throw new NotFoundException($"Parent with ID {id} not found.");
+
+            _context.Parents.Remove(parent);
+            await _context.SaveChangesAsync();
+
         }
         public async Task UpdateStudentToParent(Guid parentId, Guid studentId)
         {
             var parentExists = await _context.Parents.AnyAsync(p => p.Id == parentId);
-            if (!parentExists) throw new NotFoundException($"Parent with ID {parentId} not found.");
+            if (!parentExists) 
+                throw new NotFoundException($"Parent with ID {parentId} not found.");
 
             var studentExists = await _context.Students.AnyAsync(s => s.Id == studentId);
-            if (!studentExists) throw new NotFoundException($"Student with ID {studentId} not found.");
+            if (!studentExists) 
+                throw new NotFoundException($"Student with ID {studentId} not found.");
 
             var studentParent = new StudentParent { ParentId = parentId, StudentId = studentId };
             await _context.StudentParents.AddAsync(studentParent);
@@ -87,7 +89,5 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
                 .Select(sp => sp.Student)
                 .ToListAsync();
         }
-
-
     }
 }
