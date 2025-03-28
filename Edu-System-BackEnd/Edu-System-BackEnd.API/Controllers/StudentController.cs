@@ -38,24 +38,17 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.API.Controllers
         [HttpPost]
         public async Task<ActionResult<StudentDto>> Create([FromBody] CreateStudentDto studentDto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            var student = _mapper.Map<Student>(studentDto);
-            await _studentService.CreateStudentAsync(student);
-
-            var studentResponse = _mapper.Map<StudentDto>(student);
-            return CreatedAtAction(nameof(GetById), new { id = studentResponse.Id }, studentResponse);
+            var createdStudent = await _studentService.CreateStudentAsync(studentDto);
+            return CreatedAtAction(nameof(GetById), new { id = createdStudent.Id }, createdStudent);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateStudentDto studentDto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            if (id != studentDto.Id) return BadRequest("ID in path and body do not match.");
-
-            var student = _mapper.Map<Student>(studentDto);
-            await _studentService.UpdateStudentAsync(student);
-
+            if(id != studentDto.Id) 
+                return BadRequest(new { message = "ID in path and body do not match." });
+            
+            await _studentService.UpdateStudentAsync(studentDto);
             return NoContent();
         }
 
