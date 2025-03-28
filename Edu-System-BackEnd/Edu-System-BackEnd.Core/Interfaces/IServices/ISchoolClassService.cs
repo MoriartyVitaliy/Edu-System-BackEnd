@@ -1,13 +1,14 @@
-﻿using Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities;
+﻿using Edu_System_BackEnd.Edu_System_BackEnd.Core.DTOs;
+using Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities;
 
 namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces.IServices
 {
     public interface ISchoolClassService
     {
-        public Task<IEnumerable<SchoolClass>> GetAll();
-        public Task<SchoolClass> GetById(Guid id);
-        public Task Create(SchoolClass schoolClass);
-        public Task Update(SchoolClass schoolClass);
-        public Task Delete(Guid id);
+        public Task<IEnumerable<SchoolClassDto>> GetAllSchoolClassAsync();
+        public Task<SchoolClassDto> GetSchoolClassByIdAsync(Guid id);
+        public Task<SchoolClassDto> CreateSchoolClassAsync(CreateSchoolClassDto schoolClass);
+        public Task UpdateSchoolClassAsync(UpdateSchoolClassDto schoolClass);
+        public Task DeleteSchoolClassAsync(Guid id);
     }
 }

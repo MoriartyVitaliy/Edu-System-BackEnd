@@ -20,38 +20,35 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SchoolClassDto>>> GetAll()
         {
-            var schoolClasses = await _schoolClassService.GetAll();
-            return Ok(_mapper.Map<IEnumerable<SchoolClassDto>>(schoolClasses));
+            var schoolClasses = await _schoolClassService.GetAllSchoolClassAsync();
+            return Ok(schoolClasses);
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<SchoolClassDto>> GetById(Guid id)
         {
-            var schoolClass = await _schoolClassService.GetById(id);
-            if (schoolClass == null) return NotFound();
-            return Ok(_mapper.Map<SchoolClassDto>(schoolClass));
+            var schoolClass = await _schoolClassService.GetSchoolClassByIdAsync(id);
+            return Ok(schoolClass);
         }
         [HttpPost]
         public async Task<ActionResult<SchoolClassDto>> Create([FromBody] CreateSchoolClassDto createSchoolClassDto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            var schoolClass = _mapper.Map<SchoolClass>(createSchoolClassDto);
-            await _schoolClassService.Create(schoolClass);
-            var schoolClassResponse = _mapper.Map<SchoolClassDto>(schoolClass);
-            return CreatedAtAction(nameof(GetById), new { id = schoolClassResponse.Id }, schoolClassResponse);
+            var createSchoolClass = await _schoolClassService.CreateSchoolClassAsync(createSchoolClassDto);
+            return CreatedAtAction(nameof(GetById), new { id = createSchoolClass.Id }, createSchoolClass);
+
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSchoolClassDto updateSchoolClassDto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            if (id != updateSchoolClassDto.Id) return BadRequest("ID in path and body do not match.");
-            var schoolClass = _mapper.Map<SchoolClass>(updateSchoolClassDto);
-            await _schoolClassService.Update(schoolClass);
+            if(id != updateSchoolClassDto.Id)
+                return BadRequest(new { message = "ID in path and body do not match." });
+
+            await _schoolClassService.UpdateSchoolClassAsync(updateSchoolClassDto);
             return NoContent();
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _schoolClassService.Delete(id);
+            await _schoolClassService.DeleteSchoolClassAsync(id);
             return NoContent();
         }
     }

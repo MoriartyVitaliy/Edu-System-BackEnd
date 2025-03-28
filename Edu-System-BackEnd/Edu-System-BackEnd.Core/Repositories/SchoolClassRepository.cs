@@ -1,4 +1,5 @@
 ﻿using Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities;
+using Edu_System_BackEnd.Edu_System_BackEnd.Core.Exceptions;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces.IRepositories;
 using Edu_System_BackEnd.Edu_System_BackEnd.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,9 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
         }
         public async Task UpdateAsync(SchoolClass schoolClass)
         {
+            var schoolClassExists = await _context.SchoolClasses.AnyAsync(s => s.Id == schoolClass.Id);
+            if (!schoolClassExists) throw new NotFoundException($"SchoolClass with id {schoolClass.Id} not found.");
+
             _context.SchoolClasses.Update(schoolClass);
             await _context.SaveChangesAsync();
         }
@@ -41,7 +45,7 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
             var schoolClass = await _context.SchoolClasses.FirstOrDefaultAsync(s => s.Id == id);
             if (schoolClass == null)
             {
-                throw new Exception("School class not found.");
+                throw new NotFoundException($"SchoolClass with id {id} not found.");
             }
             _context.SchoolClasses.Remove(schoolClass);
             await _context.SaveChangesAsync();
