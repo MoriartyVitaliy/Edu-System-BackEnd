@@ -17,8 +17,9 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Mapping
             CreateMap<CreateStudentDto, Student>()
                 .ReverseMap();
             CreateMap<UpdateStudentDto, Student>()
+                .ForMember(dest => dest.SchoolClassId, opt => opt.Ignore())
                 .ForMember(dest => dest.SchoolClass, opt => opt.Ignore())
-                .ReverseMap();
+                .ForMember(dest => dest.UserRoles, opt => opt.Ignore());
 
             CreateMap<Teacher, TeacherDto>()
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles.Select(ur => ur.Role.Name).ToList()))
