@@ -1,6 +1,5 @@
-﻿using AutoMapper;
-using Edu_System_BackEnd.Edu_System_BackEnd.Core.DTOs;
-using Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities;
+﻿using Edu_System_BackEnd.Edu_System_BackEnd.Core.DTOs;
+using Edu_System_BackEnd.Edu_System_BackEnd.Core.Exceptions;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces.IServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,11 +10,9 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.API.Controllers
     public class SchoolClassController : ControllerBase
     {
         private readonly ISchoolClassService _schoolClassService;
-        private readonly IMapper _mapper;
-        public SchoolClassController(ISchoolClassService schoolClassService, IMapper mapper)
+        public SchoolClassController(ISchoolClassService schoolClassService)
         {
             _schoolClassService = schoolClassService;
-            _mapper = mapper;
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SchoolClassDto>>> GetAll()
