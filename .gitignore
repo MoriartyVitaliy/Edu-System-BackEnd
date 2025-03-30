@@ -361,3 +361,12 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+#sqlite
+F:\Cursove\Edu-System-BackEnd\Edu-System-BackEnd\Sqlite\
+
+# ignore all db SQLite
+Sqlite/edu_system.db
+*.db
+*.db-wal
+*.db-shm
