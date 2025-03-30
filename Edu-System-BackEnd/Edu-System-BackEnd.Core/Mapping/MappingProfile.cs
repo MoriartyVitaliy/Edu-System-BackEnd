@@ -33,10 +33,11 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Mapping
 
             CreateMap<Subject, SubjectDto>()
                 .ReverseMap();
+
             CreateMap<CreateSubjectDto, Subject>()
-                .ReverseMap();
-            CreateMap<UpdateSubjectDto, Subject>()
-                .ReverseMap();
+                .ForMember(dest => dest.Lessons, opt => opt.Ignore());
+            CreateMap<UpdateSubjectDto, Subject>();
+
 
             CreateMap<SchoolClass, SchoolClassDto>()
                 .ForMember(dest => dest.Students, opt =>
