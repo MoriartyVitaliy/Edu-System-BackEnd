@@ -58,7 +58,9 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.API.Controllers
         public async Task<ActionResult<IEnumerable<StudentDto>>> GetStudentParent(Guid parentId)
         {
             var students = await _parentService.GetParentStudentAsync(parentId);
-            if (students == null) return NotFound();
+            if (students == null) 
+                return NotFound();
+
             return Ok(students);
         }
     }

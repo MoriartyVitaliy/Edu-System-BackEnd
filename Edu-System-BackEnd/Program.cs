@@ -20,56 +20,58 @@ namespace Edu_System_BackEnd
 
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            //Scopes for reps and servs
-            builder.Services.AddScoped<IStudentService, StudentService>();
-            builder.Services.AddScoped<IStudentRepository, StudentRepository>();
-            builder.Services.AddScoped<ITeacherService, TeacherService>();
-            builder.Services.AddScoped<ITeacherRepository, TeacherRepository>();
-            builder.Services.AddScoped<ISubjectService, SubjectService>();
-            builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
-            builder.Services.AddScoped<ISchoolClassService, SchoolClassService>();
-            builder.Services.AddScoped<ISchoolClassRepository, SchoolClassRepository>();
-            builder.Services.AddScoped<IParentService, ParentService>();
-            builder.Services.AddScoped<IParentRepository, ParentRepository>();
-
-
-            builder.Services.AddAutoMapper(typeof(MappingProfile));
-
-
-            //builder.Services.AddSingleton<AuditableInterceptor>();
-
-            builder.Services.AddDbContext<Edu_System_BackEndDbContext>((provider, option) =>
-            {
-                //var interceptor = provider.GetRequiredService<AuditableInterceptor>();
-
-                option.EnableSensitiveDataLogging()
-                    .UseSqlite((builder.Configuration.GetConnectionString("DefaultConnection")), sqliteOption =>
-                    {
-                        //sqliteOption.MigrationsHistoryTable("__MyMigrationsHistory", "devtips_audit_logs");
-                    })
-                    //.AddInterceptors(interceptor)
-                    .UseSnakeCaseNamingConvention();
-            });
-
-
+            ConfigureServices(builder.Services, builder.Configuration);
 
             var app = builder.Build();
 
-            using(var scope = app.Services.CreateScope())
+            InitializeDatabase(app);
+
+            ConfigurePipeline(app);
+
+            app.Run();            
+        }
+
+        private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddControllers();
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen();
+
+            services.AddSingleton<Edu_System_BackEndDbContext>(provider =>
+            {
+                var options = new DbContextOptionsBuilder<Edu_System_BackEndDbContext>()
+                    .UseSqlite(configuration.GetConnectionString("DefaultConnection"))
+                    .UseSnakeCaseNamingConvention()
+                    .Options;
+                return new Edu_System_BackEndDbContext(options);
+            });
+
+            services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<ITeacherService, TeacherService>();
+            services.AddScoped<ITeacherRepository, TeacherRepository>();
+            services.AddScoped<ISubjectService, SubjectService>();
+            services.AddScoped<ISubjectRepository, SubjectRepository>();
+            services.AddScoped<ISchoolClassService, SchoolClassService>();
+            services.AddScoped<ISchoolClassRepository, SchoolClassRepository>();
+            services.AddScoped<IParentService, ParentService>();
+            services.AddScoped<IParentRepository, ParentRepository>();
+
+            services.AddAutoMapper(typeof(MappingProfile));
+        }
+
+        private static void InitializeDatabase(WebApplication app)
+        {
+            using (var scope = app.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<Edu_System_BackEndDbContext>();
                 context.Database.Migrate();
                 DataSeed.SeedData(context);
             }
+        }
 
-            // Configure the HTTP request pipeline.
+        private static void ConfigurePipeline(WebApplication app)
+        {
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -77,15 +79,11 @@ namespace Edu_System_BackEnd
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
 
-            //Middleware
             app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             app.MapControllers();
-
-            app.Run();
         }
     }
 }

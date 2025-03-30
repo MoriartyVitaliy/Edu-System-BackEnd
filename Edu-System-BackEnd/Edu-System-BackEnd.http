@@ -1,6 +1,60 @@
-@Edu_System_BackEnd_HostAddress = http://localhost:5258
+﻿@Edu_System_BackEnd_HostAddress = http://localhost:5258
 
-GET {{Edu_System_BackEnd_HostAddress}}/weatherforecast/
-Accept: application/json
+### Get all students
+GET {{Edu_System_BackEnd_HostAddress}}/api/v1/students
+Accept: text/plain
 
-###
+### Get student by ID (right)
+GET {{Edu_System_BackEnd_HostAddress}}/api/v1/students/3747c37e-91a5-4cc9-bd71-af2ee64ed186
+Accept: text/plain
+
+### Get student by ID (wrong)
+GET {{Edu_System_BackEnd_HostAddress}}/api/v1/students/00000000-0000-0000-0000-000000000000
+Accept: text/plain
+
+### Put student by ID (right, retunr no content)
+PUT {{Edu_System_BackEnd_HostAddress}}/api/v1/students/3747c37e-91a5-4cc9-bd71-af2ee64ed186
+Content-Type: application/json
+{
+  "id": "3747c37e-91a5-4cc9-bd71-af2ee64ed186",
+  "firstName": "Володя",
+  "middleName": "Володич",
+  "lastName": "Шаповал",
+  "email": "user@example.com",
+  "passwordHash": "string"
+}
+
+### Put student by ID (wrong, return bad request)
+PUT {{Edu_System_BackEnd_HostAddress}}/api/v1/students/3747c37e-91a5-4cc9-bd71-af2ee64ed186
+Content-Type: application/json
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "firstName": "string",
+  "middleName": "string",
+  "lastName": "string",
+  "email": "user@example.com",
+  "passwordHash": "string"
+}
+### Put student by ID (wrong, return not found)
+PUT {{Edu_System_BackEnd_HostAddress}}/api/v1/students/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "firstName": "string",
+  "middleName": "string",
+  "lastName": "string",
+  "email": "user@example.com",
+  "passwordHash": "string"
+}
+
+### Post student (right)
+POST {{Edu_System_BackEnd_HostAddress}}/api/v1/students
+Content-Type: application/json
+{
+  "firstName": "string",
+  "middleName": "string",
+  "lastName": "string",
+  "email": "user@example.com",
+  "passwordHash": "string",
+  "schoolClassId": "8a6e62dc-5da0-4fc8-a18d-cb7f3d8a8dc5"
+}
