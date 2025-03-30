@@ -1,4 +1,5 @@
 ﻿using Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities;
+using Edu_System_BackEnd.Edu_System_BackEnd.Core.Exceptions;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces;
 using Edu_System_BackEnd.Edu_System_BackEnd.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,10 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
         }
         public async Task UpdateAsync(Subject subject)
         {
+            if(await _context.Subjects.FirstOrDefaultAsync(s => s.Id == subject.Id) == null)
+            {
+                throw new NotFoundException($"Subject with id {subject.Id} not found.");
+            }
             _context.Subjects.Update(subject);
             await _context.SaveChangesAsync();
         }
@@ -36,7 +41,7 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
             var subject = await _context.Subjects.FirstOrDefaultAsync(s => s.Id == id);
             if (subject == null)
             {
-                throw new Exception("Subject not found.");
+                throw new NotFoundException("Subject not found.");
             }
             _context.Subjects.Remove(subject);
             await _context.SaveChangesAsync();

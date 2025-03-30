@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.DTOs.Subject;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities;
+using Edu_System_BackEnd.Edu_System_BackEnd.Core.Exceptions;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,50 +23,38 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.API.Controllers
         public async Task<ActionResult<SubjectDto>> GetAll()
         {
             var subjects = await _subjectService.GetAllSubjectsAsync();
-            return Ok(_mapper.Map<IEnumerable<SubjectDto>>(subjects));
+            return Ok(subjects);
             
         }
-        [HttpGet("{id}", Name = "GetSubjectByIdAsync")]
-        public async Task<ActionResult<SubjectDto>> GetSubjectByIdAsync(Guid id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SubjectDto>> GetById(Guid id)
         {
             var subject = await _subjectService.GetSubjectByIdAsync(id);
-            if (subject == null) return NotFound();
-
-            return Ok(_mapper.Map<SubjectDto>(subject));
+            return Ok(subject);
         }
 
 
-        //ToDo: Findout why CreaatedAtAction is not working
+        //ToDo: Findout why CreatedAtAction is not working
 
         [HttpPost]
         public async Task<ActionResult<SubjectDto>> CreateSubjectAsync([FromBody] CreateSubjectDto createSubjectDto)
         {
-            if(!ModelState.IsValid) return BadRequest(ModelState);
-
-            var subject = _mapper.Map<Subject>(createSubjectDto);
-            await _subjectService.CreateSubjectAsync(subject);
-
-            var subjectResponse = _mapper.Map<SubjectDto>(subject);
-            return CreatedAtRoute("GetSubjectByIdAsync", new { id = subjectResponse.Id }, subjectResponse);
+            var createdSubject = await _subjectService.CreateSubjectAsync(createSubjectDto);
+            return CreatedAtAction(nameof(GetById), new { id = createdSubject.Id }, createdSubject);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateSubjectAsync(Guid id, [FromBody] UpdateSubjectDto updateSubjectDto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            if (id != updateSubjectDto.Id) return BadRequest("ID in path and body do not match.");
+            if(id != updateSubjectDto.Id)
+                return BadRequest(new { message = "ID in path and body do not match." });
 
-            var subject = _mapper.Map<Subject>(updateSubjectDto);
-            await _subjectService.UpdateSubjectAsync(subject);
-            
+            await _subjectService.UpdateSubjectAsync(updateSubjectDto);
             return NoContent();
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSubjectAsync(Guid id)
         {
-            var subject = await _subjectService.GetSubjectByIdAsync(id);
-            if(subject == null) return NotFound();
-
             await _subjectService.DeleteSubjectAsync(id);
             return NoContent();
         }
