@@ -1,6 +1,6 @@
-﻿using AutoMapper;
-using Edu_System_BackEnd.Edu_System_BackEnd.Core.DTOs;
+﻿using Edu_System_BackEnd.Edu_System_BackEnd.Core.DTOs;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities;
+using Edu_System_BackEnd.Edu_System_BackEnd.Core.Exceptions;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,53 +11,36 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.API.Controllers
     public class TeacherController : ControllerBase
     {
         private readonly ITeacherService _teacherService;
-        private readonly IMapper _mapper;
-        public TeacherController(ITeacherService teacherService, IMapper mapper)
+        public TeacherController(ITeacherService teacherService)
         {
             _teacherService = teacherService;
-            _mapper = mapper;
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TeacherDto>>> GetAll()
         {
             var teachers = await _teacherService.GetAllTeachersAsync();
-            return Ok(_mapper.Map<IEnumerable<TeacherDto>>(teachers));
+            return Ok(teachers);
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<TeacherDto>> GetById(Guid id)
         {
             var teacher = await _teacherService.GetTeacherByIdAsync(id);
-            if (teacher == null) return NotFound();
-
-            return Ok(_mapper.Map<TeacherDto>(teacher));
+            return Ok(teacher);
         }
         [HttpPost]
         public async Task<ActionResult<TeacherDto>> Create([FromBody] CreateTeacherDto createTeacherDto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            var teacher = _mapper.Map<Teacher>(createTeacherDto);
-            await _teacherService.CreateTeacherAsync(teacher);
-
-            var teacherResponse = _mapper.Map<TeacherDto>(teacher);
-            return CreatedAtAction(nameof(GetById), new { id = teacherResponse.Id }, teacherResponse);
+            var createdTeacher = await _teacherService.CreateTeacherAsync(createTeacherDto);
+            return CreatedAtAction(nameof(GetById), new { id = createdTeacher.Id }, createdTeacher);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTeacherDto teacherDto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTeacherDto updateTeacherDto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            if (id != teacherDto.Id) return BadRequest("ID in path and body do not match.");
+            if(id != updateTeacherDto.Id)
+                return BadRequest(new { message = "ID in path and body do not match." });
 
-            var teacher = _mapper.Map<Teacher>(teacherDto);
-            await _teacherService.UpdateTeacherAsync(teacher);
-
-            return NoContent();
-        }
-        [HttpPut("update-class")]
-        public async Task<IActionResult> UpdateClass(Guid teacherId, Guid classId)
-        {
-            await _teacherService.UpdateTeacherClassAsync(teacherId, classId);
+            await _teacherService.UpdateTeacherAsync(updateTeacherDto);
             return NoContent();
         }
 
@@ -65,9 +48,31 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.API.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var teacher = await _teacherService.GetTeacherByIdAsync(id);
-            if (teacher == null) return NotFound();
+            if (teacher == null) 
+                return NotFound();
 
             await _teacherService.DeleteTeacherAsync(id);
+            return NoContent();
+        }
+
+        [HttpGet("{teacherId}/classes")]
+        public async Task<IActionResult> GetTeacherClasses(Guid teacherId)
+        {
+            var classes = await _teacherService.GetTeacherClassesAsync(teacherId);
+            return Ok(classes);
+        }
+
+        [HttpPut("{teacherId}/classes/{classId}")]
+        public async Task<IActionResult> UpdateTeacherClass(Guid teacherId, Guid classId)
+        {
+            await _teacherService.UpdateTeacherClassAsync(teacherId, classId);
+            return NoContent();
+        }
+
+        [HttpDelete("{teacherId}/classes/{classId}")]
+        public async Task<IActionResult> DeleteTeacherClass(Guid teacherId, Guid classId)
+        {
+            await _teacherService.DeleteTeacherClassAsync(teacherId, classId);
             return NoContent();
         }
     }

@@ -4,7 +4,8 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces
 {
     public interface ITeacherRepository : ICrudRepository<Teacher>
     {
-        //ToDo: Add custom methods
+        public Task<IEnumerable<SchoolClass>> GetAllTeacherClassesAsync(Guid teacherId);
         public Task UpdateTeacherClassAsync(Guid teacherId, Guid classId);
+        public Task DeleteTeacherClassAsync(Guid teacherId, Guid classId);
     }
 }

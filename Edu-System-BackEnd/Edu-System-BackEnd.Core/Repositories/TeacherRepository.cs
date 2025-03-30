@@ -1,4 +1,5 @@
 ﻿using Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities;
+using Edu_System_BackEnd.Edu_System_BackEnd.Core.Exceptions;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces;
 using Edu_System_BackEnd.Edu_System_BackEnd.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,6 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
                     .ThenInclude(r => r.Role)
                 .ToListAsync();
         }
-
         public async Task<Teacher?> GetByIdAsync(Guid id)
         {
             return await _context.Teachers
@@ -29,14 +29,13 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
                     .ThenInclude(r => r.Role)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
-
         public async Task AddAsync(Teacher teacher)
         {
             var teacherRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Teacher");
 
             if (teacherRole == null)
             {
-                throw new Exception("Роль 'Teacher' не знайдена в базі даних.");
+                throw new NotFoundException("Роль 'Teacher' не знайдена в базі даних.");
             }
 
             teacher.UserRoles = new List<UserRole> { new UserRole { RoleId = teacherRole.Id, UserId = teacher.Id } };
@@ -45,7 +44,6 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
 
             await _context.SaveChangesAsync();
         }
-
         public async Task DeleteAsync(Guid id)
         {
             var teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.Id == id);
@@ -55,7 +53,6 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
                 await _context.SaveChangesAsync();
             }
         }
-
         public async Task UpdateAsync(Teacher teacher)
         {
             _context.Teachers.Update(teacher);
@@ -63,31 +60,34 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
         }
         public async Task UpdateTeacherClassAsync(Guid teacherId, Guid classId)
         {
-            var teacher = await _context.Teachers
-                .Include(t => t.ClassSupervisions) 
-                .FirstOrDefaultAsync(t => t.Id == teacherId);
+            var teacher = await _context.Teachers.FindAsync(teacherId)
+                ?? throw new NotFoundException("Teacher not found.");
 
-            if (teacher == null)
-            {
-                throw new Exception("Teacher not found.");
-            }
+            var schoolClass = await _context.SchoolClasses.FindAsync(classId)
+                ?? throw new NotFoundException("School class not found.");
 
-            var schoolClass = await _context.SchoolClasses
-                .FirstOrDefaultAsync(c => c.Id == classId);
+            schoolClass.Teacher = teacher;
+            await _context.SaveChangesAsync();
+        }
+        public async Task DeleteTeacherClassAsync(Guid teacherId, Guid classId)
+        {
+            var teacher = await _context.Teachers.FindAsync(teacherId)
+                ?? throw new NotFoundException("Teacher not found.");
 
-            if (schoolClass == null)
-            {
-                throw new Exception("School class not found.");
-            }
+            var schoolClass = await _context.SchoolClasses.FindAsync(classId)
+                ?? throw new NotFoundException("School class not found.");
 
-            // Переконуємося, що клас ще не додано
-            if (!teacher.ClassSupervisions.Any(c => c.Id == classId))
-            {
-                teacher.ClassSupervisions.Add(schoolClass);
-            }
-
+            teacher.ClassSupervisions.Remove(schoolClass);
             await _context.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<SchoolClass>> GetAllTeacherClassesAsync(Guid teacherId)
+        {
+            var classes = await _context.SchoolClasses
+                .Where(sc => sc.TeacherId == teacherId) // Фильтруем только по этому учителю
+                .ToListAsync();
+
+            return classes;
+        }
     }
 }
