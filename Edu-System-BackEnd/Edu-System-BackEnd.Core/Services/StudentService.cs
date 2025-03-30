@@ -20,7 +20,7 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Services
             var students = await _studentRepository.GetAllAsync();
             return _mapper.Map<IEnumerable<StudentDto>>(students);
         }
-        public async Task<StudentDto> GetStudentByIdAsync(Guid id)
+        public async Task<StudentDto?> GetStudentByIdAsync(Guid id)
         {
             var students = await _studentRepository.GetByIdAsync(id)
                 ?? throw new NotFoundException($"Student with id {id} not found");
@@ -41,7 +41,6 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Services
             if (student == null)
                 throw new NotFoundException($"Student with ID {updateStudentDto.Id} not found.");
 
-            // Маппим только разрешённые поля
             _mapper.Map(updateStudentDto, student);
 
             await _studentRepository.UpdateAsync(student);

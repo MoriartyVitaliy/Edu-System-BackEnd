@@ -72,7 +72,6 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
             student.SchoolClass = schoolClass;
             await _context.SaveChangesAsync();
         }
-
         public async Task DeleteAsync(Guid id)
         {
             var student = await _context.Students.FindAsync(id)
