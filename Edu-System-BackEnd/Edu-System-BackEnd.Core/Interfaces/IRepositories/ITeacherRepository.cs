@@ -7,5 +7,6 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces
         public Task<IEnumerable<SchoolClass>> GetAllTeacherClassesAsync(Guid teacherId);
         public Task UpdateTeacherClassAsync(Guid teacherId, Guid classId);
         public Task DeleteTeacherClassAsync(Guid teacherId, Guid classId);
+        public Task<(Teacher, SchoolClass)> GetTeacherClassAsync(Guid teacherId, Guid classId);
     }
 }
