@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Edu_System_BackEnd.Edu_System_BackEnd.Core.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities
 {
     public class Lesson
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public Guid SubjectId { get; set; }
         public Subject Subject { get; set; }
@@ -15,14 +16,16 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities
         public Guid SchoolClassId { get; set; }
         public SchoolClass SchoolClass { get; set; }
 
-        public DateTime LessonDate { get; set; }
+        public Guid DailyScheduleId { get; set; }
+        public DailySchedule DailySchedule { get; set; }
 
-        [StringLength(20)]
         public string Classroom { get; set; }
+        public LessonType Type { get; set; }
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
 
-        public ICollection<LessonMark> LessonMarks { get; set; }
-        public ICollection<Attendance> Attendances { get; set; }
-        public ICollection<Homework> Homeworks { get; set; }
+        public ICollection<Homework> Homeworks { get; set; } = new List<Homework>();
+        public ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
+        public ICollection<LessonMark> LessonMarks { get; set; } = new List<LessonMark>();
     }
-
 }

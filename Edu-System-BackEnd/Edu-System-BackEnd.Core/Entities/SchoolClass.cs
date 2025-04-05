@@ -11,6 +11,6 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities
         public Teacher? Teacher { get; set; }
         public ICollection<Student> Students { get; set; }
         public ICollection<Lesson> Lessons { get; set; }
+        public ICollection<DailySchedule> Schedules { get; set; }
     }
-
 }
