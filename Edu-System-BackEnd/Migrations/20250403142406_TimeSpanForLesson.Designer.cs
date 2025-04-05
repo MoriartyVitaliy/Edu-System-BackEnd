@@ -3,6 +3,7 @@ using System;
 using Edu_System_BackEnd.Edu_System_BackEnd.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Edu_System_BackEnd.Migrations
 {
     [DbContext(typeof(Edu_System_BackEndDbContext))]
-    partial class Edu_System_BackEndDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250403142406_TimeSpanForLesson")]
+    partial class TimeSpanForLesson
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
@@ -55,7 +58,7 @@ namespace Edu_System_BackEnd.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("id");
 
-                    b.Property<DateOnly>("Date")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("TEXT")
                         .HasColumnName("date");
 

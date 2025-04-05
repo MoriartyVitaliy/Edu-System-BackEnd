@@ -3,6 +3,7 @@ using System;
 using Edu_System_BackEnd.Edu_System_BackEnd.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Edu_System_BackEnd.Migrations
 {
     [DbContext(typeof(Edu_System_BackEndDbContext))]
-    partial class Edu_System_BackEndDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250403001111_AddSchoolClassToWKSCH")]
+    partial class AddSchoolClassToWKSCH
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
@@ -55,9 +58,13 @@ namespace Edu_System_BackEnd.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("id");
 
-                    b.Property<DateOnly>("Date")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("TEXT")
                         .HasColumnName("date");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("day_of_week");
 
                     b.Property<Guid>("SchoolClassId")
                         .HasColumnType("TEXT")
@@ -182,7 +189,7 @@ namespace Edu_System_BackEnd.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("daily_schedule_id");
 
-                    b.Property<TimeSpan>("EndTime")
+                    b.Property<DateTime>("EndTime")
                         .HasColumnType("TEXT")
                         .HasColumnName("end_time");
 
@@ -190,7 +197,7 @@ namespace Edu_System_BackEnd.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("school_class_id");
 
-                    b.Property<TimeSpan>("StartTime")
+                    b.Property<DateTime>("StartTime")
                         .HasColumnType("TEXT")
                         .HasColumnName("start_time");
 

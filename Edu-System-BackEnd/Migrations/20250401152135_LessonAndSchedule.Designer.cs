@@ -3,6 +3,7 @@ using System;
 using Edu_System_BackEnd.Edu_System_BackEnd.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Edu_System_BackEnd.Migrations
 {
     [DbContext(typeof(Edu_System_BackEndDbContext))]
-    partial class Edu_System_BackEndDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250401152135_LessonAndSchedule")]
+    partial class LessonAndSchedule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
@@ -46,37 +49,6 @@ namespace Edu_System_BackEnd.Migrations
                         .HasDatabaseName("ix_attendances_student_id");
 
                     b.ToTable("attendances", (string)null);
-                });
-
-            modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.DailySchedule", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("id");
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("date");
-
-                    b.Property<Guid>("SchoolClassId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("school_class_id");
-
-                    b.Property<Guid>("WeeklyScheduleId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("weekly_schedule_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_daily_schedules");
-
-                    b.HasIndex("SchoolClassId")
-                        .HasDatabaseName("ix_daily_schedules_school_class_id");
-
-                    b.HasIndex("WeeklyScheduleId")
-                        .HasDatabaseName("ix_daily_schedules_weekly_schedule_id");
-
-                    b.ToTable("daily_schedules", (string)null);
                 });
 
             modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.Homework", b =>
@@ -178,21 +150,13 @@ namespace Edu_System_BackEnd.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("classroom");
 
-                    b.Property<Guid>("DailyScheduleId")
+                    b.Property<Guid?>("ScheduleId")
                         .HasColumnType("TEXT")
-                        .HasColumnName("daily_schedule_id");
-
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("end_time");
+                        .HasColumnName("schedule_id");
 
                     b.Property<Guid>("SchoolClassId")
                         .HasColumnType("TEXT")
                         .HasColumnName("school_class_id");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("start_time");
 
                     b.Property<Guid>("SubjectId")
                         .HasColumnType("TEXT")
@@ -209,8 +173,8 @@ namespace Edu_System_BackEnd.Migrations
                     b.HasKey("Id")
                         .HasName("pk_lessons");
 
-                    b.HasIndex("DailyScheduleId")
-                        .HasDatabaseName("ix_lessons_daily_schedule_id");
+                    b.HasIndex("ScheduleId")
+                        .HasDatabaseName("ix_lessons_schedule_id");
 
                     b.HasIndex("SchoolClassId")
                         .HasDatabaseName("ix_lessons_school_class_id");
@@ -275,6 +239,30 @@ namespace Edu_System_BackEnd.Migrations
                         .HasName("pk_roles");
 
                     b.ToTable("roles", (string)null);
+                });
+
+            modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.Schedule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("id");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("day_of_week");
+
+                    b.Property<Guid>("SchoolClassId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("school_class_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_schedules");
+
+                    b.HasIndex("SchoolClassId")
+                        .HasDatabaseName("ix_schedules_school_class_id");
+
+                    b.ToTable("schedules", (string)null);
                 });
 
             modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.SchoolClass", b =>
@@ -407,26 +395,6 @@ namespace Edu_System_BackEnd.Migrations
                     b.ToTable("user_roles", (string)null);
                 });
 
-            modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.WeeklySchedule", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("SchoolClassId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("school_class_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_weekly_schedules");
-
-                    b.HasIndex("SchoolClassId")
-                        .HasDatabaseName("ix_weekly_schedules_school_class_id");
-
-                    b.ToTable("weekly_schedules", (string)null);
-                });
-
             modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.HomeworkMark", b =>
                 {
                     b.HasBaseType("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.Mark");
@@ -507,27 +475,6 @@ namespace Edu_System_BackEnd.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.DailySchedule", b =>
-                {
-                    b.HasOne("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.SchoolClass", "SchoolClass")
-                        .WithMany("Schedules")
-                        .HasForeignKey("SchoolClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_daily_schedules_school_classes_school_class_id");
-
-                    b.HasOne("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.WeeklySchedule", "WeeklySchedule")
-                        .WithMany("DailySchedules")
-                        .HasForeignKey("WeeklyScheduleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_daily_schedules_weekly_schedules_weekly_schedule_id");
-
-                    b.Navigation("SchoolClass");
-
-                    b.Navigation("WeeklySchedule");
-                });
-
             modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.Homework", b =>
                 {
                     b.HasOne("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.Lesson", "Lesson")
@@ -572,12 +519,10 @@ namespace Edu_System_BackEnd.Migrations
 
             modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.Lesson", b =>
                 {
-                    b.HasOne("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.DailySchedule", "DailySchedule")
+                    b.HasOne("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.Schedule", null)
                         .WithMany("Lessons")
-                        .HasForeignKey("DailyScheduleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_lessons_daily_schedules_daily_schedule_id");
+                        .HasForeignKey("ScheduleId")
+                        .HasConstraintName("fk_lessons_schedules_schedule_id");
 
                     b.HasOne("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.SchoolClass", "SchoolClass")
                         .WithMany("Lessons")
@@ -600,13 +545,23 @@ namespace Edu_System_BackEnd.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_lessons_teachers_teacher_id");
 
-                    b.Navigation("DailySchedule");
-
                     b.Navigation("SchoolClass");
 
                     b.Navigation("Subject");
 
                     b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.Schedule", b =>
+                {
+                    b.HasOne("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.SchoolClass", "SchoolClass")
+                        .WithMany("Schedules")
+                        .HasForeignKey("SchoolClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_schedules_school_classes_school_class_id");
+
+                    b.Navigation("SchoolClass");
                 });
 
             modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.SchoolClass", b =>
@@ -660,18 +615,6 @@ namespace Edu_System_BackEnd.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.WeeklySchedule", b =>
-                {
-                    b.HasOne("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.SchoolClass", "SchoolClass")
-                        .WithMany()
-                        .HasForeignKey("SchoolClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_weekly_schedules_school_classes_school_class_id");
-
-                    b.Navigation("SchoolClass");
                 });
 
             modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.HomeworkMark", b =>
@@ -746,11 +689,6 @@ namespace Edu_System_BackEnd.Migrations
                         .HasConstraintName("fk_teachers_users_id");
                 });
 
-            modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.DailySchedule", b =>
-                {
-                    b.Navigation("Lessons");
-                });
-
             modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.Homework", b =>
                 {
                     b.Navigation("Submissions");
@@ -770,6 +708,11 @@ namespace Edu_System_BackEnd.Migrations
                     b.Navigation("UserRoles");
                 });
 
+            modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.Schedule", b =>
+                {
+                    b.Navigation("Lessons");
+                });
+
             modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.SchoolClass", b =>
                 {
                     b.Navigation("Lessons");
@@ -787,11 +730,6 @@ namespace Edu_System_BackEnd.Migrations
             modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.User", b =>
                 {
                     b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.WeeklySchedule", b =>
-                {
-                    b.Navigation("DailySchedules");
                 });
 
             modelBuilder.Entity("Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities.HomeworkMark", b =>
