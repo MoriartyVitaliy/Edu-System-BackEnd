@@ -26,6 +26,8 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Infrastructure.Persistence
         public DbSet<HomeworkSubmission> HomeworkSubmissions { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<StudentParent> StudentParents { get; set; }
+        public DbSet<DailySchedule> DailySchedules { get; set; }
+        public DbSet<WeeklySchedule> WeeklySchedules { get; set; }
         //public DbSet<AuditLog> AuditLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -112,6 +114,12 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Infrastructure.Persistence
                 .HasForeignKey(hm => hm.LessonId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Lesson>()
+                .HasOne(ds => ds.DailySchedule)
+                .WithMany(l => l.Lessons)
+                .HasForeignKey(ds => ds.DailyScheduleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             //Homework
 
             modelBuilder.Entity<Homework>()
@@ -137,6 +145,26 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Infrastructure.Persistence
                 .HasOne(hs => hs.HomeworkMark)
                 .WithOne(m => m.HomeworkSubmission)
                 .HasForeignKey<HomeworkSubmission>(hs => hs.HomeworkMarkId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //DailySchedule
+            modelBuilder.Entity<DailySchedule>()
+                .HasOne(sc => sc.SchoolClass)
+                .WithMany(s => s.Schedules)
+                .HasForeignKey(sc => sc.SchoolClassId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<DailySchedule>()
+                .HasOne(s => s.SchoolClass)
+                .WithMany(sc => sc.Schedules)
+                .HasForeignKey(s => s.SchoolClassId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //WeeklySchedule
+            modelBuilder.Entity<WeeklySchedule>()
+                .HasMany(ws => ws.DailySchedules)
+                .WithOne(w => w.WeeklySchedule)
+                .HasForeignKey(ws => ws.WeeklyScheduleId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }
