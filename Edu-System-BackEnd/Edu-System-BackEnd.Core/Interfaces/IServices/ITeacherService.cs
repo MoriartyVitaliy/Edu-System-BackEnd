@@ -10,7 +10,7 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces
         Task<TeacherDto> CreateTeacherAsync(CreateTeacherDto createTeacherDto);
         Task UpdateTeacherAsync(UpdateTeacherDto updateTeacherDto);
         Task DeleteTeacherAsync(Guid id);
-        public Task<IEnumerable<SchoolClassDto>> GetTeacherClassesAsync(Guid teacherId);
+        Task<IEnumerable<SchoolClassDto>> GetTeacherClassesAsync(Guid teacherId);
         Task UpdateTeacherClassAsync(Guid teacherId, Guid classId);
         Task DeleteTeacherClassAsync(Guid teacherId, Guid classId);
     }
