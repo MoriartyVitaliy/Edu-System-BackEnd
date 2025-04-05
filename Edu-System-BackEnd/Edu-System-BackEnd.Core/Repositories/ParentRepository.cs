@@ -6,13 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
 {
-    public class ParentRepository : IParentRepository
+    public class ParentRepository : BaseRepository, IParentRepository
     {
-        private readonly Edu_System_BackEndDbContext _context;
-        public ParentRepository(Edu_System_BackEndDbContext context)
-        {
-            _context = context;
-        }
+        public ParentRepository(Edu_System_BackEndDbContext context) : base(context) { }
         public async Task<IEnumerable<Parent>> GetAllAsync()
         {
             return await _context.Parents

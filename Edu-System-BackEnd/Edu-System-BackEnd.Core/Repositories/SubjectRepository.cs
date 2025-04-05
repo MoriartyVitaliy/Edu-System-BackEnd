@@ -6,13 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
 {
-    public class SubjectRepository : ISubjectRepository
+    public class SubjectRepository : BaseRepository, ISubjectRepository
     {
-        private readonly Edu_System_BackEndDbContext _context;
-        public SubjectRepository(Edu_System_BackEndDbContext context)
-        {
-            _context = context;
-        }
+        public SubjectRepository(Edu_System_BackEndDbContext context) : base(context) { }
         public async Task<IEnumerable<Subject>> GetAllAsync()
         {
             return await _context.Subjects.ToListAsync();

@@ -58,33 +58,32 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
             _context.Teachers.Update(teacher);
             await _context.SaveChangesAsync();
         }
-        public async Task UpdateTeacherClassAsync(Guid teacherId, Guid classId)
+        public async Task<(Teacher, SchoolClass)> GetTeacherClassAsync(Guid teacherId, Guid classId)
         {
             var teacher = await _context.Teachers.FindAsync(teacherId)
                 ?? throw new NotFoundException("Teacher not found.");
-
             var schoolClass = await _context.SchoolClasses.FindAsync(classId)
                 ?? throw new NotFoundException("School class not found.");
+            return (teacher, schoolClass);
+        }
+        public async Task UpdateTeacherClassAsync(Guid teacherId, Guid classId)
+        {
+            var (teacher, schoolClass) = await GetTeacherClassAsync(teacherId, classId);
 
             schoolClass.Teacher = teacher;
             await _context.SaveChangesAsync();
         }
         public async Task DeleteTeacherClassAsync(Guid teacherId, Guid classId)
         {
-            var teacher = await _context.Teachers.FindAsync(teacherId)
-                ?? throw new NotFoundException("Teacher not found.");
-
-            var schoolClass = await _context.SchoolClasses.FindAsync(classId)
-                ?? throw new NotFoundException("School class not found.");
+            var (teacher, schoolClass) = await GetTeacherClassAsync(teacherId, classId);
 
             teacher.ClassSupervisions.Remove(schoolClass);
             await _context.SaveChangesAsync();
         }
-
         public async Task<IEnumerable<SchoolClass>> GetAllTeacherClassesAsync(Guid teacherId)
         {
             var classes = await _context.SchoolClasses
-                .Where(sc => sc.TeacherId == teacherId) // Фильтруем только по этому учителю
+                .Where(sc => sc.TeacherId == teacherId)
                 .ToListAsync();
 
             return classes;

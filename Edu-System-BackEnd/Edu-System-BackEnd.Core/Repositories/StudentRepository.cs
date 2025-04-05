@@ -9,13 +9,9 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
 
 
     //TODO : Implement methods and add exceptions to them
-    public class StudentRepository : IStudentRepository
+    public class StudentRepository : BaseRepository, IStudentRepository
     {
-        private readonly Edu_System_BackEndDbContext _context;
-        public StudentRepository(Edu_System_BackEndDbContext context)
-        {
-            _context = context;
-        }
+        public StudentRepository(Edu_System_BackEndDbContext context) : base(context) { }
         public async Task<IEnumerable<Student>> GetAllAsync()
         {
             return await _context.Students
