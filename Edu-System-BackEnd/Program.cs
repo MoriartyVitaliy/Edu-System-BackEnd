@@ -1,9 +1,11 @@
 
 using Edu_System_BackEnd.Edu_System_BackEnd.API.Middleware;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces;
+using Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces.IProviders;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces.IRepositories;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces.IServices;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Mapping;
+using Edu_System_BackEnd.Edu_System_BackEnd.Core.Providers;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Services;
 using Edu_System_BackEnd.Edu_System_BackEnd.Infrastructure.External;
@@ -56,6 +58,14 @@ namespace Edu_System_BackEnd
             services.AddScoped<ISchoolClassRepository, SchoolClassRepository>();
             services.AddScoped<IParentService, ParentService>();
             services.AddScoped<IParentRepository, ParentRepository>();
+            services.AddScoped<ILessonService, LessonService>();
+            services.AddScoped<ILessonRepository, LessonRepository>();
+            services.AddScoped<IDailyScheduleRepository, DailyScheduleRepository>();
+            services.AddScoped<IDailyScheduleService, DailyScheduleService>();
+            services.AddScoped<IWeeklyScheduleRepository, WeeklyScheduleRepository>();
+            services.AddScoped<IWeeklyScheduleService, WeeklyScheduleService>();
+
+            services.AddScoped<IScheduleInfoProvider, ScheduleInfoProvider>();
 
             services.AddAutoMapper(typeof(MappingProfile));
         }
