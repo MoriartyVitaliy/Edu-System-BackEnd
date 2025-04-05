@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.DTOs;
+using Edu_System_BackEnd.Edu_System_BackEnd.Core.DTOs.Homework;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.DTOs.Parent;
+using Edu_System_BackEnd.Edu_System_BackEnd.Core.DTOs.Schedule;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.DTOs.Subject;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities;
+using Edu_System_BackEnd.Edu_System_BackEnd.Core.Enums;
 
 namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Mapping
 {
@@ -69,6 +72,36 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Mapping
                 .ForMember(dest => dest.StudentParents, opt => opt.Ignore())
                 .ReverseMap();
 
+
+            // ToDo: make mapping #########################
+
+
+            CreateMap<DailySchedule, DailyScheduleDto>()
+                .ForMember(dest => dest.Lessons, opt => opt.MapFrom(src => src.Lessons))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date));
+            CreateMap<CreateDailyScheduleDto, DailySchedule>();
+            CreateMap<UpdateDailyScheduleDto, DailySchedule>();
+
+
+
+            CreateMap<WeeklySchedule, WeeklyScheduleDto>()
+                .ForMember(dest => dest.SchoolClassName, opt => opt.MapFrom(src => src.SchoolClass.Name))
+                .ForMember(dest => dest.DailySchedules, opt => opt.MapFrom(src => src.DailySchedules));
+            CreateMap<CreateWeeklyScheduleDto, WeeklySchedule>();
+            CreateMap<UpdateWeeklyScheduleDto, WeeklySchedule>();
+
+
+
+            //##############################################
+
+            CreateMap<Lesson, LessonDto>()
+                .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.Name))
+                .ForMember(dest => dest.TeacherName, opt => opt.MapFrom(src => src.Teacher != null ? $"{src.Teacher.LastName} {src.Teacher.FirstName} {src.Teacher.MiddleName}" : null))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => Enum.GetName(typeof(LessonType), src.Type)));
+
+            CreateMap<CreateLessonDto, Lesson>();
+            CreateMap<UpdateLessonDto, Lesson>()
+                .ForAllMembers(opts => opts.NullSubstitute(null));
         }
     }
 }
