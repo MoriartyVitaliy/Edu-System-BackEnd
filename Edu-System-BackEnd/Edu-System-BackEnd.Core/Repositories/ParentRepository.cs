@@ -9,81 +9,78 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
     public class ParentRepository : BaseRepository, IParentRepository
     {
         public ParentRepository(Edu_System_BackEndDbContext context) : base(context) { }
-        public async Task<IEnumerable<Parent>> GetAllAsync()
-        {
-            return await _context.Parents
-                .Include(p => p.StudentParents)
-                    .ThenInclude(sp => sp.Student)
-                .Include(p => p.UserRoles)
-                    .ThenInclude(ur => ur.Role)
-                .ToListAsync();
-        }
-        public Task<Parent?> GetByIdAsync(Guid id)
-        {
-            return _context.Parents
-                .Include(p => p.StudentParents)
-                    .ThenInclude(sp => sp.Student)
-                .Include(p => p.UserRoles)
-                    .ThenInclude(ur => ur.Role)
-                .FirstOrDefaultAsync(p => p.Id == id);
-        }
-        public async Task AddAsync(Parent parent)
-        {
-            var parentRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Parent");
-            if (parentRole == null)
-                throw new NotFoundException("Role 'Parent' not found via data base");
 
-            parent.UserRoles = new List<UserRole> 
-            {
-                new UserRole { RoleId = parentRole.Id, UserId = parent.Id } 
-            };
-
-            await _context.Parents.AddAsync(parent);
+        public async Task AddAsync(Parent parent)           
+        {
+            await _context.Users.AddAsync(parent.User);
             await _context.SaveChangesAsync();
         }
-        public Task UpdateAsync(Parent parent)
-        {
-            var existingParent = _context.Parents.FirstOrDefault(p => p.Id == parent.Id);
-            if (existingParent == null) 
-                throw new NotFoundException($"Parent with ID {parent.Id} not found.");
 
-            _context.Parents.Update(parent);
-            return _context.SaveChangesAsync();
-        }
         public async Task DeleteAsync(Guid id)
         {
-            var parent = await _context.Parents.FirstOrDefaultAsync(p => p.Id == id);
+            var parent = await _context.Parents.FirstOrDefaultAsync(p => p.UserId == id);
             if (parent == null)
                 throw new NotFoundException($"Parent with ID {id} not found.");
 
             _context.Parents.Remove(parent);
             await _context.SaveChangesAsync();
-
         }
-        public async Task UpdateStudentToParent(Guid parentId, Guid studentId)
+
+        public async Task<IEnumerable<Parent>> GetAllAsync()
         {
-            var parentExists = await _context.Parents.AnyAsync(p => p.Id == parentId);
-            if (!parentExists) 
-                throw new NotFoundException($"Parent with ID {parentId} not found.");
+            return await _context.Parents
+                .Include(p => p.User)
+                    .ThenInclude(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
+                .Include(p => p.StudentParents)
+                    .ThenInclude(sp => sp.Student)
+                .ToListAsync();
+        }
 
-            var studentExists = await _context.Students.AnyAsync(s => s.Id == studentId);
-            if (!studentExists) 
-                throw new NotFoundException($"Student with ID {studentId} not found.");
+        public async Task<Parent?> GetByIdAsync(Guid id)
+        {
+            return await _context.Parents
+                .Include(p => p.User)
+                    .ThenInclude(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
+                .Include(p => p.StudentParents)
+                    .ThenInclude(sp => sp.Student)
+                .FirstOrDefaultAsync(p => p.User.Id == id);
+        }
 
-            var studentParent = new StudentParent { ParentId = parentId, StudentId = studentId };
+        public async Task<IEnumerable<Student>> GetChildrenAsync(Guid parentId)
+        {
+            var parent = await _context.Parents
+                .Include(p => p.StudentParents)
+                .ThenInclude(sp => sp.Student)
+                .FirstOrDefaultAsync(p => p.User.Id == parentId);
+
+            if (parent == null) throw new NotFoundException("Parent not found");
+
+            return parent.StudentParents.Select(sp => sp.Student);
+        }
+
+        public async Task LinkChildAsync(Guid parentId, Guid studentId)
+        {
+            var exists = await _context.StudentParents
+                .AnyAsync(sp => sp.ParentId == parentId && sp.StudentId == studentId);
+
+            if (exists)
+                throw new AlreadyExistsException("Link already exists between parent and student");
+
+            var studentParent = new StudentParent
+            {
+                ParentId = parentId,
+                StudentId = studentId
+            };
+
             await _context.StudentParents.AddAsync(studentParent);
             await _context.SaveChangesAsync();
         }
-        public async Task<IEnumerable<Student>> GetParentStudents(Guid parentId)
+
+        public Task UpdateAsync(Parent entity)
         {
-            return await _context.StudentParents
-                .Where(sp => sp.ParentId == parentId)
-                .Include(sp => sp.Student)
-                    .ThenInclude(s => s.UserRoles)
-                        .ThenInclude(ur => ur.Role)
-                .Include(sp => sp.Student.SchoolClass)
-                .Select(sp => sp.Student)
-                .ToListAsync();
+            throw new NotImplementedException();
         }
     }
 }

@@ -5,57 +5,79 @@ using Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Exceptions;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces.IRepositories;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces.IServices;
+using Edu_System_BackEnd.Edu_System_BackEnd.Core.Utils;
+using Microsoft.AspNetCore.Identity;
 
 namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Services
 {
     public class ParentService : IParentService
     {
+        private readonly IUserService _userService;
+        private readonly IRoleService _roleService;
         private readonly IParentRepository _parentRepository;
         private readonly IMapper _mapper;
-        public ParentService(IParentRepository parentRepository, IMapper mapper)
+        public ParentService(IUserService userService , IParentRepository parentRepository, IMapper mapper, IRoleService roleService)
         {
             _parentRepository = parentRepository;
+            _userService = userService;
             _mapper = mapper;
+            _roleService = roleService;
         }
-        public async Task<IEnumerable<ParentDto>> GetAllParentsAsync()
+
+        public async Task AddAsync(CreateParentDto createParentDto)
+        {
+            await _userService.AddAsync(createParentDto.User);
+
+            var parent = await _userService.GetByEmailAsync(createParentDto.User.Email)
+                ?? throw new NotFoundException($"User with email {createParentDto.User.Email} not found.");
+
+            await _roleService.AssignUserRole(parent.Id, "Parent");
+
+            var parentEntity = _mapper.Map<Parent>(createParentDto);
+
+            parentEntity.UserId = parent.Id;
+            parentEntity.User = null;
+
+            await _parentRepository.AddAsync(parentEntity);
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            await _parentRepository.DeleteAsync(id);
+        }
+
+        public async Task<IEnumerable<ParentDto>> GetAllAsync()
         {
             var parents = await _parentRepository.GetAllAsync();
             return _mapper.Map<IEnumerable<ParentDto>>(parents);
         }
-        public async Task<ParentDto> GetParentByIdAsync(Guid id)
+
+        public async Task<ParentDto?> GetByIdAsync(Guid id)
         {
-            var parent = await _parentRepository.GetByIdAsync(id) 
-                ?? throw new NotFoundException($"Parent with ID {id} not found.");
+            var parent = await _parentRepository.GetByIdAsync(id);
+            if (parent == null)
+                throw new NotFoundException($"Parent with ID {id} not found.");
             return _mapper.Map<ParentDto>(parent);
         }
-        public async Task<ParentDto> CreateParentAsync(CreateParentDto createParentDto)
-        {
-            var parent = _mapper.Map<Parent>(createParentDto);
-            parent.Id = Guid.NewGuid();
 
-            await _parentRepository.AddAsync(parent);
-            return _mapper.Map<ParentDto>(parent);
-        }
-        public async Task UpdateParentAsync(UpdateParentDto updateParentDto)
+        public async Task<IEnumerable<StudentDto>> GetChildrenAsync(Guid parentId)
         {
-            var parent = _mapper.Map<Parent>(updateParentDto);
-            await _parentRepository.UpdateAsync(parent);
-        }
-        public async Task DeleteParentAsync(Guid id)
-        {
-            await _parentRepository.DeleteAsync(id);
-        }
-        public async Task<IEnumerable<StudentDto>> GetParentStudentAsync(Guid parentId)
-        {
-            var students = await _parentRepository.GetParentStudents(parentId);
+            var students = await _parentRepository.GetChildrenAsync(parentId);
 
-            if(!students.Any()) throw new NotFoundException("No students found for parent.");
+            if (students == null || !students.Any())
+                throw new NotFoundException("No children found for this parent");
 
             return _mapper.Map<IEnumerable<StudentDto>>(students);
         }
-        public async Task UpdateParentStudentAsync(Guid parentId, Guid studentId)
+
+        public async Task LinkChildAsync(Guid parentId, Guid studentId)
         {
-            await _parentRepository.UpdateStudentToParent(parentId, studentId);
+            await _parentRepository.LinkChildAsync(parentId, studentId);
+        }
+
+        public async Task UpdateAsync(UpdateParentDto updateParentDto)
+        {
+            await _userService.UpdateAsync(updateParentDto.User);
         }
     }
 }
