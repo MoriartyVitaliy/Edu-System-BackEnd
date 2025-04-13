@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ..  
+      dockerfile: ./docker/Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081" # HTTPS
+    volumes:
+      - ./Sqlite:/app/Sqlite
+      - ${USERPROFILE}/.aspnet/https:/https:ro
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Aboba123!
+      - ASPNETCORE_URLS=https://+:8081;http://+:8080
+      - RedisConnectionString=redis:6379
+      - JwtSettings__Key=7thdC]2jJ:,I5MvK)-eYTi&acaATPNI$
+      - JwtSettings__Issuer=EduSystemApi
+      - JwtSettings__Audience=EduSystemClient
+    depends_on:
+      - redis
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
