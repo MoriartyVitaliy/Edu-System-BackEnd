@@ -12,13 +12,15 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Services
     public class WeeklyScheduleService : IWeeklyScheduleService
     {
         private readonly IWeeklyScheduleRepository _weeklyScheduleRepository;
+        private readonly ISchoolClassRepository _schoolClassRepository;
         private readonly IScheduleInfoProvider _scheduleInfoProvider;
         private readonly IMapper _mapper;
-        public WeeklyScheduleService(IWeeklyScheduleRepository scheduleRepository, IScheduleInfoProvider scheduleInfoProvider, IMapper mapper)
+        public WeeklyScheduleService(IWeeklyScheduleRepository scheduleRepository, IScheduleInfoProvider scheduleInfoProvider, IMapper mapper, ISchoolClassRepository schoolClassRepository)
         {
             _weeklyScheduleRepository = scheduleRepository;
             _scheduleInfoProvider = scheduleInfoProvider;
             _mapper = mapper;
+            _schoolClassRepository = schoolClassRepository;
         }
 
         public async Task<IEnumerable<WeeklyScheduleDto>> GetAllWeeklySchedulesAsync()
@@ -83,6 +85,26 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Services
                 throw new NotFoundException("Weekly schedule not found");
             }
             return _mapper.Map<WeeklyScheduleDto?>(weeklySchedule);
+        }
+        public async Task<IEnumerable<WeeklyScheduleDto>> GetAllWeeklySchedulesByClassId(Guid schoolClassId)
+        {
+            var weeklySchedule = await _weeklyScheduleRepository.GetAllWeeklySchedulesByClassId(schoolClassId);
+            if (weeklySchedule == null)
+            {
+                throw new NotFoundException("Weekly schedule not found");
+            }
+            return _mapper.Map<IEnumerable<WeeklyScheduleDto>>(weeklySchedule);
+        }
+
+        public async Task<IEnumerable<WeeklyScheduleDto>> GetAllWeeklySchedulesByClassName(string className)
+        {
+            var schoolClass = await _schoolClassRepository.GetByNameAsync(className);
+            if (schoolClass == null)
+            {
+                throw new NotFoundException($"School class with name '{className}' not found");
+            }
+
+            return await GetAllWeeklySchedulesByClassId(schoolClass.Id);
         }
     }
 }

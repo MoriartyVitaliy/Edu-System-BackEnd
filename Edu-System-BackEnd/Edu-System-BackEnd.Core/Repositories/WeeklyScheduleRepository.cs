@@ -58,6 +58,19 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
             _context.WeeklySchedules.Remove(weeklySchedule);
             return _context.SaveChangesAsync();
         }
+        public async Task<IEnumerable<WeeklySchedule?>> GetAllWeeklySchedulesByClassId(Guid schoolClassId)
+        {
+            return await _context.WeeklySchedules
+                .Where(ws => ws.SchoolClassId == schoolClassId)
+                .Include(ws => ws.DailySchedules)
+                    .ThenInclude(ds => ds.Lessons)
+                        .ThenInclude(l => l.Subject)
+                .Include(ws => ws.DailySchedules)
+                    .ThenInclude(ds => ds.Lessons)
+                        .ThenInclude(l => l.Teacher)
+                .ToListAsync();
+        }
+
         public async Task<WeeklySchedule?> GetCurrentWeekScheduleAsync(Guid schoolClassId, DateTime startOfWeek)
         {
             return await _context.WeeklySchedules
