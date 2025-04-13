@@ -5,11 +5,14 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces
 {
     public interface IStudentService
     {
-        Task<IEnumerable<StudentDto>> GetAllStudentsAsync();
-        Task<StudentDto?> GetStudentByIdAsync(Guid id);
-        Task<StudentDto> CreateStudentAsync(CreateStudentDto createStudentDto);
-        Task UpdateStudentAsync(UpdateStudentDto updateStudentDto);
-        Task UpdateStudentClassAsync(Guid studentId, Guid classId);
-        Task DeleteStudentAsync(Guid id);
+        Task<IEnumerable<StudentDto>> GetAllAsync();
+        Task<StudentDto?> GetByIdAsync(Guid id);
+        Task AddAsync(CreateStudentDto createStudentDto);
+        Task UpdateAsync(UpdateStudentDto updateStudentDto);
+        Task DeleteAsync(Guid id);
+
+        Task UpdateClassAsync(Guid studentId, Guid newClassId);
+        Task AddOrUpdateParentAsync(Guid studentId, Guid parentId);
     }
+
 }
