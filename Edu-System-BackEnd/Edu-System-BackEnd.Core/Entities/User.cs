@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities
 {
-    public abstract class User
+    public class User
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string FirstName { get; set; } = string.Empty;
@@ -11,6 +11,7 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
-        public List<UserRole> UserRoles { get; set; }
+        public string? PhoneNumber { get; set; } = string.Empty;
+        public List<UserRole> UserRoles { get; set; } = new List<UserRole>();
     }
 }

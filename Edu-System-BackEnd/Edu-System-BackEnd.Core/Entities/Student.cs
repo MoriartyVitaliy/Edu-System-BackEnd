@@ -2,10 +2,11 @@
 
 namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities
 {
-    public class Student : User
+    public class Student
     {
+        public Guid UserId { get; set; }
+        public User User { get; set; }
         public Guid SchoolClassId { get; set; }
-        [JsonIgnore]
         public SchoolClass SchoolClass { get; set; }
         public ICollection<LessonMark> LessonMarks { get; set; }
         public ICollection<HomeworkMark> HomeworkMarks { get; set; }
