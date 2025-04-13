@@ -4,11 +4,9 @@ using Edu_System_BackEnd.Edu_System_BackEnd.Core.Entities;
 namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces.IRepositories
 {
 
-    // ToDo: Add ICrudRepository
     public interface IParentRepository : ICrudRepository<Parent>
     {
-        //ToDo: Add custom methods
-        public Task<IEnumerable<Student>> GetParentStudents(Guid parentId);
-        public Task UpdateStudentToParent(Guid parentId, Guid studentId);
+        Task<IEnumerable<Student>> GetChildrenAsync(Guid parentId);
+        Task LinkChildAsync(Guid parentId, Guid studentId);
     }
 }
