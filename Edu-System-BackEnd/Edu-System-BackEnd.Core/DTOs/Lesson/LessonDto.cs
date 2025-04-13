@@ -31,7 +31,7 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.DTOs.Schedule
         public string Classroom { get; set; }
         public LessonType Type { get; set; }
         public TimeSpan StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public TimeSpan EndTime { get; set; }
     }
 
     public class UpdateLessonDto
