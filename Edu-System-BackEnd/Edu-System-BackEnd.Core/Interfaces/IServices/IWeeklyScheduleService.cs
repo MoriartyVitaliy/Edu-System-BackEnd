@@ -11,6 +11,8 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces.IRepositories
         Task UpdateWeeklyScheduleAsync(UpdateWeeklyScheduleDto updateWeeklyScheduleDto);
         Task DeleteWeeklyScheduleAsync(Guid weeklyScheduleId);
         Task<WeeklyScheduleDto> CreateNextWeekScheduleAsync(Guid schoolClassId);
-        Task<WeeklyScheduleDto?> GetCurrentWeekScheduleAsync(Guid schoolClassId); 
+        Task<WeeklyScheduleDto?> GetCurrentWeekScheduleAsync(Guid schoolClassId);
+        Task<IEnumerable<WeeklyScheduleDto>> GetAllWeeklySchedulesByClassId(Guid schoolClassId);
+        Task<IEnumerable<WeeklyScheduleDto>> GetAllWeeklySchedulesByClassName(string className);
     }
 }
