@@ -1,10 +1,12 @@
 ﻿using Edu_System_BackEnd.Edu_System_BackEnd.Core.DTOs;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Exceptions;
 using Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Edu_System_BackEnd.Edu_System_BackEnd.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/v1/school-classes")]
     public class SchoolClassController : ControllerBase
@@ -14,18 +16,24 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.API.Controllers
         {
             _schoolClassService = schoolClassService;
         }
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SchoolClassDto>>> GetAll()
         {
             var schoolClasses = await _schoolClassService.GetAllSchoolClassAsync();
             return Ok(schoolClasses);
         }
+
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<SchoolClassDto>> GetById(Guid id)
         {
             var schoolClass = await _schoolClassService.GetSchoolClassByIdAsync(id);
             return Ok(schoolClass);
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<SchoolClassDto>> Create([FromBody] CreateSchoolClassDto createSchoolClassDto)
         {
@@ -33,6 +41,8 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createSchoolClass.Id }, createSchoolClass);
 
         }
+
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSchoolClassDto updateSchoolClassDto)
         {
@@ -42,6 +52,8 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.API.Controllers
             await _schoolClassService.UpdateSchoolClassAsync(updateSchoolClassDto);
             return NoContent();
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

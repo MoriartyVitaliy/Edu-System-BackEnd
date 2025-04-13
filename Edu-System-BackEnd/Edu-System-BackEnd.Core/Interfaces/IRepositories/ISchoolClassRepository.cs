@@ -4,6 +4,6 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Interfaces.IRepositories
 {
     public interface ISchoolClassRepository : ICrudRepository<SchoolClass>
     {
-        //ToDo : Add custom methods
+        Task<SchoolClass?> GetByNameAsync(string name);
     }
 }
