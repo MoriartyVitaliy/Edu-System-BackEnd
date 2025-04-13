@@ -46,5 +46,11 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.Repositories
             _context.SchoolClasses.Remove(schoolClass);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<SchoolClass?> GetByNameAsync(string name)
+        {
+            return await _context.SchoolClasses
+                                 .FirstOrDefaultAsync(c => c.Name == name);
+        }
     }
 }
