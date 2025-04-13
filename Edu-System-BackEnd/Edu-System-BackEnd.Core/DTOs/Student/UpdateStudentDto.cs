@@ -5,26 +5,11 @@ namespace Edu_System_BackEnd.Edu_System_BackEnd.Core.DTOs
 {
     public class UpdateStudentDto
     {
+        public UpdateUserDto User { get; set; } = new UpdateUserDto();
 
-        [Required]
-        public Guid Id { get; set; }
+        public Guid? SchoolClassId { get; set; }
 
-        [Required]
-        public string FirstName { get; set; }
-            
-        [Required]
-        public string MiddleName { get; set; }
-            
-        [Required]
-        public string LastName { get; set; }
-
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
-        [PasswordPropertyText]
-        public string PasswordHash { get; set; }
+        public List<Guid>? ParentIds { get; set; }
 
     }
 }
